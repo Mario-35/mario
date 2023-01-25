@@ -1,3 +1,8 @@
+# Pour rennes metropole
+
+nouvelle URL : https://api.geosas.fr/rennesmetro/v1.0/
+
+
 ## datastream 1
 
 https://api.geosas.fr/lora/v1.0/MultiDatastreams(1)?$expand=Loras
@@ -133,6 +138,30 @@ LE CHANGEMENT DE NOM DU CAPTEUR EST STUPIDE LES DONNEES NE SUIVENT PAS ... ET C'
 
 IL VA FALOIR FUSIONNER le multiDatastream 2 et le multiDatastream 11 par chance le 11 sera a supprimer JE VAIS FAIRE DES TESTS AVANT MAIS NORMALEMENT CA DEVRAIT SE CORRIGER
 
+```sql
+SELECT *,
+        "resultnumbers"[(select position from  multidatastream, jsonb_array_elements("multidatastream"."unitOfMeasurements") with ordinality arr(elem, 
+position) where id = "multidatastream_id" and elem->>'name' = 'Temperature')] as "temperature",
+        "resultnumbers"[(select position from  multidatastream, jsonb_array_elements("multidatastream"."unitOfMeasurements") with ordinality arr(elem, 
+position) where id = "multidatastream_id" and elem->>'name' = 'humidity')] as "humidity",
+        "resultnumbers"[(select position from  multidatastream, jsonb_array_elements("multidatastream"."unitOfMeasurements") with ordinality arr(elem, 
+position) where id = "multidatastream_id" and elem->>'name' = 'Battery')] as "battery"
+ FROM "observation"
+ WHERE "observation"."id" in (select "observation"."id" from "observation" where "observation"."multidatastream_id" = 11)
+ORDER BY "phenomenonTime" ASC
+```
+
+
+premiere correction :
+
+remetre les id en places ;)
+
+```sql
+UPDATE "observation" SET "multidatastream_id" = 11 where "observation"."multidatastream_id" = 2 AND "observation"."id" >= 512955;
+```
+
+512955
+
 ## datastream 3
 
 https://api.geosas.fr/lora/v1.0/MultiDatastreams(3)?$expand=Loras
@@ -205,7 +234,7 @@ UPDATE "observation"
 SET resultnumbers = ARRAY["resultnumbers"[2], "resultnumbers"[1], "resultnumbers"[3]]
 WHERE "observation"."id" in (select "observation"."id" from "observation" where "observation"."multidatastream_id" = 3) 
 AND "observation"."id" >= 24903 
-AND "observation"."id" < 326232
+AND "observation"."id" < 326232;
 ```
 resultats:
 
@@ -294,10 +323,7 @@ Inversion : 2022-09-05 13:53:45.000 +0200 id => 326239
 borne ( >= 326239)
 
 ```sql
-UPDATE "observation"
-SET resultnumbers = ARRAY["resultnumbers"[2], "resultnumbers"[1], "resultnumbers"[3]]
-WHERE "observation"."id" in (select "observation"."id" from "observation" where "observation"."multidatastream_id" = 4) 
-AND "observation"."id" >= 326239 
+UPDATE "observation" SET resultnumbers = ARRAY["resultnumbers"[2], "resultnumbers"[1], "resultnumbers"[3]] WHERE "observation"."id" in (select "observation"."id" from "observation" where "observation"."multidatastream_id" = 4) AND "observation"."id" >= 326239; 
 ```
 resultats:
 
@@ -383,11 +409,7 @@ retour : 2022-09-05T13:50:33+02:00 id => 326237
 borne ( >= 24837 AND < 326237)
 
 ```sql
-UPDATE "observation"
-SET resultnumbers = ARRAY["resultnumbers"[2], "resultnumbers"[1], "resultnumbers"[3]]
-WHERE "observation"."id" in (select "observation"."id" from "observation" where "observation"."multidatastream_id" = 5) 
-AND "observation"."id" >= 24952 
-AND "observation"."id" < 326237
+UPDATE "observation" SET resultnumbers = ARRAY["resultnumbers"[2], "resultnumbers"[1], "resultnumbers"[3]] WHERE "observation"."id" in (select "observation"."id" from "observation" where "observation"."multidatastream_id" = 5) AND "observation"."id" >= 24952 AND "observation"."id" < 326237;
 ```
 resultats:
 
@@ -462,11 +484,7 @@ retour : 2022-09-05T13:50:33+02:00 id => 326240
 borne ( >= 24952 AND < 326240)
 
 ```sql
-UPDATE "observation"
-SET resultnumbers = ARRAY["resultnumbers"[2], "resultnumbers"[1], "resultnumbers"[3]]
-WHERE "observation"."id" in (select "observation"."id" from "observation" where "observation"."multidatastream_id" = 6) 
-AND "observation"."id" >= 24952 
-AND "observation"."id" < 326240
+UPDATE "observation" SET resultnumbers = ARRAY["resultnumbers"[2], "resultnumbers"[1], "resultnumbers"[3]] WHERE "observation"."id" in (select "observation"."id" from "observation" where "observation"."multidatastream_id" = 6) AND "observation"."id" >= 24952 AND "observation"."id" < 326240;
 ```
 resultats:
 
@@ -540,11 +558,7 @@ retour : 2022-09-05 13:48:19.000 +0200 id => 326236
 borne ( >= 24932 AND < 326236)
 
 ```sql
-UPDATE "observation"
-SET resultnumbers = ARRAY["resultnumbers"[2], "resultnumbers"[1], "resultnumbers"[3]]
-WHERE "observation"."id" in (select "observation"."id" from "observation" where "observation"."multidatastream_id" = 7) 
-AND "observation"."id" >= 24932 
-AND "observation"."id" < 326236
+UPDATE "observation" SET resultnumbers = ARRAY["resultnumbers"[2], "resultnumbers"[1], "resultnumbers"[3]] WHERE "observation"."id" in (select "observation"."id" from "observation" where "observation"."multidatastream_id" = 7) AND "observation"."id" >= 24932 AND "observation"."id" < 326236;
 ```
 resultats:
 
@@ -618,11 +632,7 @@ retour : 2022-09-05 13:40:57.000 +0200 id => 326230
 borne ( >= 24988 AND < 326230)
 
 ```sql
-UPDATE "observation"
-SET resultnumbers = ARRAY["resultnumbers"[2], "resultnumbers"[1], "resultnumbers"[3]]
-WHERE "observation"."id" in (select "observation"."id" from "observation" where "observation"."multidatastream_id" = 8) 
-AND "observation"."id" >= 24988 
-AND "observation"."id" < 326230
+UPDATE "observation" SET resultnumbers = ARRAY["resultnumbers"[2], "resultnumbers"[1], "resultnumbers"[3]] WHERE "observation"."id" in (select "observation"."id" from "observation" where "observation"."multidatastream_id" = 8) AND "observation"."id" >= 24988 AND "observation"."id" < 326230;
 ```
 resultats:
 
@@ -696,11 +706,7 @@ retour : 2022-09-05 13:43:18.000 +0200 id => 326231
 borne ( >= 24990 AND < 326231)
 
 ```sql
-UPDATE "observation"
-SET resultnumbers = ARRAY["resultnumbers"[2], "resultnumbers"[1], "resultnumbers"[3]]
-WHERE "observation"."id" in (select "observation"."id" from "observation" where "observation"."multidatastream_id" = 9) 
-AND "observation"."id" >= 24990 
-AND "observation"."id" < 326231
+UPDATE "observation" SET resultnumbers = ARRAY["resultnumbers"[2], "resultnumbers"[1], "resultnumbers"[3]] WHERE "observation"."id" in (select "observation"."id" from "observation" where "observation"."multidatastream_id" = 9) AND "observation"."id" >= 24990 AND "observation"."id" < 326231;
 ```
 resultats:
 
@@ -775,14 +781,30 @@ retour : 2022-09-05 13:46:17.000 +0200 id => 326235
 borne ( >= 24986 AND < 326235)
 
 ```sql
-UPDATE "observation"
-SET resultnumbers = ARRAY["resultnumbers"[2], "resultnumbers"[1], "resultnumbers"[3]]
-WHERE "observation"."id" in (select "observation"."id" from "observation" where "observation"."multidatastream_id" = 10) 
-AND "observation"."id" >= 24986 
-AND "observation"."id" < 326235
+UPDATE "observation" SET resultnumbers = ARRAY["resultnumbers"[2], "resultnumbers"[1], "resultnumbers"[3]] WHERE "observation"."id" in (select "observation"."id" from "observation" where "observation"."multidatastream_id" = 10) AND "observation"."id" >= 24986 AND "observation"."id" < 326235;
 ```
 resultats:
 
 https://api.geosas.fr/sensorthings/v1.0/MultiDatastreams(9)/Observations?$resultFormat=graph
 
+
+# ALL SQL CORRECTIONS
+
+```sql
+UPDATE "observation" SET resultnumbers = ARRAY["resultnumbers"[2], "resultnumbers"[1], "resultnumbers"[3]] WHERE "observation"."id" in (select "observation"."id" from "observation" where "observation"."multidatastream_id" = 3) AND "observation"."id" >= 24903 AND "observation"."id" < 326232;
+
+UPDATE "observation" SET resultnumbers = ARRAY["resultnumbers"[2], "resultnumbers"[1], "resultnumbers"[3]] WHERE "observation"."id" in (select "observation"."id" from "observation" where "observation"."multidatastream_id" = 4) AND "observation"."id" >= 326239;
+
+UPDATE "observation" SET resultnumbers = ARRAY["resultnumbers"[2], "resultnumbers"[1], "resultnumbers"[3]] WHERE "observation"."id" in (select "observation"."id" from "observation" where "observation"."multidatastream_id" = 5) AND "observation"."id" >= 24952 AND "observation"."id" < 326237;
+
+UPDATE "observation" SET resultnumbers = ARRAY["resultnumbers"[2], "resultnumbers"[1], "resultnumbers"[3]] WHERE "observation"."id" in (select "observation"."id" from "observation" where "observation"."multidatastream_id" = 6) AND "observation"."id" >= 24952 AND "observation"."id" < 326240;
+
+UPDATE "observation" SET resultnumbers = ARRAY["resultnumbers"[2], "resultnumbers"[1], "resultnumbers"[3]] WHERE "observation"."id" in (select "observation"."id" from "observation" where "observation"."multidatastream_id" = 7) AND "observation"."id" >= 24932 AND "observation"."id" < 326236;
+
+UPDATE "observation" SET resultnumbers = ARRAY["resultnumbers"[2], "resultnumbers"[1], "resultnumbers"[3]] WHERE "observation"."id" in (select "observation"."id" from "observation" where "observation"."multidatastream_id" = 8) AND "observation"."id" >= 24988 AND "observation"."id" < 326230;
+
+UPDATE "observation" SET resultnumbers = ARRAY["resultnumbers"[2], "resultnumbers"[1], "resultnumbers"[3]] WHERE "observation"."id" in (select "observation"."id" from "observation" where "observation"."multidatastream_id" = 9) AND "observation"."id" >= 24990 AND "observation"."id" < 326231;
+
+UPDATE "observation" SET resultnumbers = ARRAY["resultnumbers"[2], "resultnumbers"[1], "resultnumbers"[3]] WHERE "observation"."id" in (select "observation"."id" from "observation" where "observation"."multidatastream_id" = 10) AND "observation"."id" >= 24986 AND "observation"."id" < 326235;
+```
 
